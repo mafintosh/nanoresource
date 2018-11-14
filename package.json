@@ -11,5 +11,13 @@
   "devDependencies": {
     "standard": "^12.0.1",
     "tape": "^4.9.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mafintosh/nanoresource.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mafintosh/nanoresource/issues"
+  },
+  "homepage": "https://github.com/mafintosh/nanoresource#readme"
 }
