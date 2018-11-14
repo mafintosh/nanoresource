@@ -1,0 +1,15 @@
+{
+  "name": "nanoresource",
+  "version": "0.0.0",
+  "description": "Small module that helps you maintain state around resources",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && tape test/*.js"
+  },
+  "author": "Mathias Buus (@mafintosh)",
+  "license": "MIT",
+  "devDependencies": {
+    "standard": "^12.0.1",
+    "tape": "^4.9.1"
+  }
+}
