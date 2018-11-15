@@ -1,6 +1,6 @@
 {
   "name": "nanoresource",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Small module that helps you maintain state around resources",
   "main": "index.js",
   "scripts": {
