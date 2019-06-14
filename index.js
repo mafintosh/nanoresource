@@ -2,6 +2,7 @@ const opening = Symbol('opening queue')
 const preclosing = Symbol('closing when inactive')
 const closing = Symbol('closing queue')
 const sync = Symbol('sync')
+const fastClose = Symbol('fast close')
 
 module.exports = Nanoresource
 
@@ -22,6 +23,7 @@ function Nanoresource (opts) {
   this[preclosing] = null
   this[closing] = null
   this[sync] = false
+  this[fastClose] = true
 }
 
 Nanoresource.prototype._open = function (cb) {
@@ -51,7 +53,7 @@ Nanoresource.prototype.open = function (cb) {
 }
 
 Nanoresource.prototype.active = function (cb) {
-  if (this[preclosing] || this[closing] || this.closed) {
+  if ((this[fastClose] && this[preclosing]) || this[closing] || this.closed) {
     if (cb) process.nextTick(cb, new Error('Resource is closed'))
     return false
   }
@@ -71,8 +73,11 @@ Nanoresource.prototype.inactive = function (cb, err, val) {
   if (cb) cb(err, val)
 }
 
-Nanoresource.prototype.close = function (cb) {
+Nanoresource.prototype.close = function (allowActive, cb) {
+  if (typeof allowActive === 'function') return this.close(false, allowActive)
   if (!cb) cb = noop
+
+  if (allowActive) this[fastClose] = false
 
   if (this.closed) return process.nextTick(cb)
 
