@@ -98,7 +98,8 @@ The close method is guaranteed to run *after* open. If no open has been called a
 
 Open the resource. Will call `r._open` behind the scenes once. If multiple calls to `r.open(cb)` the callbacks will be pushed to an internal queue and executed after the one call to `_open` has completed. If the resource was opened in the past the callback will be called on the next tick.
 
-Check `r.opened` to see if the resource is fully opened.
+* Check `r.opened` to see if the resource is fully opened.
+* Check `r.opening` to see if the resource is in the process of being opened.
 
 If the `_open` method fails and calls it callback with an error this error is forwarded to the pending callbacks and if `r.open` is called again `_open` will be re-run.
 
@@ -108,7 +109,8 @@ Same semantics as `r.open`, except it only runs `_close` if the resource has bee
 
 If the resource is active (see the `r.active()` docs) then close will wait for the the resource to become inactive before closing it. However is a call `r.active()` happens after `r.close()` has been called it will fail immediately.
 
-Check `r.closed` to see if the resource is fully closed.
+* Check `r.closed` to see if the resource is fully closed.
+* Check `r.closing` to see if the resource is in the process of being closed.
 
 Once a resource has been closed it can not be re-opened.
 

@@ -12,7 +12,9 @@ function Nanoresource (opts) {
   if (opts.open) this._open = opts.open
   if (opts.close) this._close = opts.close
 
+  this.opening = false
   this.opened = false
+  this.closing = false
   this.closed = false
   this.actives = 0
 
@@ -41,6 +43,7 @@ Nanoresource.prototype.open = function (cb) {
     return
   }
 
+  this.opening = true
   this[opening] = [ cb ]
   this[sync] = true
   this._open(onopen.bind(this))
@@ -90,6 +93,7 @@ Nanoresource.prototype.close = function (cb) {
     return
   }
 
+  this.closing = true
   this[closing] = [ cb ]
   this[sync] = true
   this._close(onclose.bind(this))
@@ -101,6 +105,7 @@ function onopen (err) {
 
   const oqueue = this[opening]
   this[opening] = null
+  this.opening = false
   this.opened = !err
 
   while (oqueue.length) oqueue.shift()(err)
@@ -115,6 +120,7 @@ function onopen (err) {
 function onclose (err) {
   if (this[sync]) return process.nextTick(onclose.bind(this), err)
   const queue = this[closing]
+  this.closing = false
   this[closing] = null
   this.closed = !err
   while (queue.length) queue.shift()(err)
