@@ -132,6 +132,10 @@ As a conveinience you can pass in a callback, error, and value to `r.inactive(ca
 
 It is same to have multiple methods call this method in parallel.
 
+## EventEmitter
+
+If you need a nanoresource that is also an EventEmitter do `const Nanoresource = require('./emitter')` which returns an implementation that inherits from Node.js's EventEmitter prototype.
+
 ## License
 
 MIT

@@ -1,3 +1,8 @@
+// Copy of index.js that extends from EventEmitter
+
+const events = require('events')
+const inherits = require('inherits')
+
 const opening = Symbol('opening queue')
 const preclosing = Symbol('closing when inactive')
 const closing = Symbol('closing queue')
@@ -8,6 +13,7 @@ module.exports = Nanoresource
 
 function Nanoresource (opts) {
   if (!(this instanceof Nanoresource)) return new Nanoresource(opts)
+  events.EventEmitter.call(this)
 
   if (!opts) opts = {}
   if (opts.open) this._open = opts.open
@@ -25,6 +31,8 @@ function Nanoresource (opts) {
   this[sync] = false
   this[fastClose] = true
 }
+
+inherits(Nanoresource, events.EventEmitter)
 
 Nanoresource.prototype._open = function (cb) {
   cb(null)
