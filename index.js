@@ -3,6 +3,7 @@ const preclosing = Symbol('closing when inactive')
 const closing = Symbol('closing queue')
 const sync = Symbol('sync')
 const fastClose = Symbol('fast close')
+const autoClose = Symbol('auto close')
 
 module.exports = Nanoresource
 
@@ -17,6 +18,7 @@ function Nanoresource (opts) {
   this.opened = false
   this.closing = false
   this.closed = false
+  this.autoClose = !!opts.autoClose
   this.actives = 0
 
   this[opening] = null
@@ -68,6 +70,7 @@ Nanoresource.prototype.inactive = function (cb, err, val) {
       this[preclosing] = null
       while (queue.length) this.close(queue.shift())
     }
+    if (this.autoClose && !this.closing && !this.closed) this.close()
   }
 
   if (cb) cb(err, val)

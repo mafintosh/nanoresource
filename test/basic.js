@@ -114,3 +114,17 @@ tape('active after close', function (t) {
   r.inactive()
   r.inactive()
 })
+
+tape('auto close', function (t) {
+  const r = nanoresource({
+    autoClose: true,
+    close (cb) {
+      t.pass('was closed')
+      t.end()
+    }
+  })
+
+  r.open()
+  r.active()
+  r.inactive()
+})
