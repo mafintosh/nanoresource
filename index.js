@@ -148,6 +148,11 @@ function onclose (err) {
   this.closing = false
   this[closing] = null
   this.closed = !err
+
+  if (this.closed) {
+    this.opened = false
+  }
+
   while (queue.length) queue.shift()(err)
 
   const cqueue = this[preopening]
