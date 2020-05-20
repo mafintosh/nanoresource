@@ -4,13 +4,14 @@
   "description": "Small module that helps you maintain state around resources",
   "main": "index.js",
   "scripts": {
-    "test": "standard && tape test/*.js"
+    "test": "tape test/*.js",
+    "posttest": "standard"
   },
   "author": "Mathias Buus (@mafintosh)",
   "license": "MIT",
   "devDependencies": {
-    "standard": "^14.3.1",
-    "tape": "^4.11.0"
+    "standard": "^14.3.4",
+    "tape": "^4.13.2"
   },
   "repository": {
     "type": "git",

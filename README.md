@@ -6,6 +6,8 @@ Small module that helps you maintain state around resources
 npm install nanoresource
 ```
 
+[![Build Status](https://travis-ci.org/mafintosh/nanoresource.svg?branch=master)](https://travis-ci.org/mafintosh/nanoresource)
+
 Allows you to easily implement open/close functionality for a resource
 and having a way to mark the resource as active/inactive to avoid it being closed
 while it is in middle of something.
