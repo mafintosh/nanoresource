@@ -84,7 +84,8 @@ Options include:
 ```js
 {
   open: function (cb) { ... },
-  close: function (cb) { ... }
+  close: function (cb) { ... },
+  reopen: false
 }
 ```
 
@@ -93,6 +94,8 @@ If you specify open or close they are used to populate `r._open` and `r._close` 
 The open should open the resource and the close one should close it.
 
 The close method is guaranteed to run *after* open. If no open has been called and close is called the close method is *not* called.
+
+If `reopen` is true the resource will allows to open the resource again after was closed.
 
 #### `r.open(cb)`
 
