@@ -114,3 +114,47 @@ tape('active after close', function (t) {
   r.inactive()
   r.inactive()
 })
+
+tape('reopen', function (t) {
+  t.plan(2 * 2 + 2 + 3 * 2 + 3)
+
+  let opened = false
+  let closed = false
+
+  const r = nanoresource({
+    reopen: true,
+    open (cb) {
+      t.notOk(closed, 'not closed in open')
+      t.notOk(opened, 'only open once')
+      opened = true
+      cb(null)
+    },
+    close (cb) {
+      t.ok(opened, 'opened when closing')
+      t.notOk(closed, 'only close once')
+      closed = true
+      setImmediate(() => {
+        r.open(onopen)
+        cb(null)
+      })
+    }
+  })
+
+  r.open(onopen)
+
+  r.close(onclose)
+
+  function onopen (err) {
+    t.error(err, 'no error')
+    t.ok(r.opened, 'was opened')
+    t.ok(opened, 'open ran')
+  }
+
+  function onclose (err) {
+    t.error(err, 'no error')
+    t.ok(r.closed, 'was closed')
+    t.ok(closed, 'close ran')
+    opened = false
+    closed = false
+  }
+})
