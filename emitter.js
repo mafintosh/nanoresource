@@ -3,11 +3,14 @@
 const events = require('events')
 const inherits = require('inherits')
 
+const preopening = Symbol('opening when closing')
 const opening = Symbol('opening queue')
 const preclosing = Symbol('closing when inactive')
 const closing = Symbol('closing queue')
 const sync = Symbol('sync')
 const fastClose = Symbol('fast close')
+const reopen = Symbol('allow reopen')
+const init = Symbol('init state')
 
 module.exports = Nanoresource
 
@@ -19,12 +22,10 @@ function Nanoresource (opts) {
   if (opts.open) this._open = opts.open
   if (opts.close) this._close = opts.close
 
-  this.opening = false
-  this.opened = false
-  this.closing = false
-  this.closed = false
-  this.actives = 0
+  this[init]()
 
+  this[reopen] = opts.reopen || false
+  this[preopening] = null
   this[opening] = null
   this[preclosing] = null
   this[closing] = null
@@ -33,6 +34,14 @@ function Nanoresource (opts) {
 }
 
 inherits(Nanoresource, events.EventEmitter)
+
+Nanoresource.prototype[init] = function () {
+  this.opening = false
+  this.opened = false
+  this.closing = false
+  this.closed = false
+  this.actives = 0
+}
 
 Nanoresource.prototype._open = function (cb) {
   cb(null)
@@ -45,7 +54,20 @@ Nanoresource.prototype._close = function (cb) {
 Nanoresource.prototype.open = function (cb) {
   if (!cb) cb = noop
 
-  if (this[closing] || this.closed) return process.nextTick(cb, new Error('Resource is closed'))
+  if (this.closing || this.closed) {
+    if (!this[reopen]) {
+      return process.nextTick(cb, new Error('Resource is closed'))
+    }
+
+    if (this.closing) {
+      if (!this[preopening]) this[preopening] = []
+      this[preopening].push(cb)
+      return
+    }
+
+    this[init]()
+  }
+
   if (this.opened) return process.nextTick(cb)
 
   if (this[opening]) {
@@ -137,6 +159,12 @@ function onclose (err) {
   this[closing] = null
   this.closed = !err
   while (queue.length) queue.shift()(err)
+
+  const cqueue = this[preopening]
+  if (cqueue) {
+    this[preopening] = null
+    while (cqueue.length) this.open(cqueue.shift())
+  }
 }
 
 function noop () {}
